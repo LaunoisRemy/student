@@ -2,6 +2,9 @@ package com.student.student.web.controller;
 
 import com.student.student.dao.StudentDao;
 import com.student.student.model.Student;
+import com.student.student.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -9,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Project: student
@@ -16,28 +20,27 @@ import java.util.Objects;
  */
 @RestController
 public class StudentController {
-    private final StudentDao studentDao;
 
-    public StudentController(StudentDao studentDao) {
-        this.studentDao = studentDao;
+    final StudentRepository studentRepository;
+
+    public StudentController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     @GetMapping("/students")
     public List<Student> listStudents() {
-        return studentDao.findAll();
+        return studentRepository.findAll();
     }
 
     @GetMapping("/student/{id}")
-    public Student getStudent(@PathVariable int id) {
-        return studentDao.findById(id);
+    public ResponseEntity<Student> getStudent(@PathVariable long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        return student.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping(value = "/students")
-    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        Student studentAdded = studentDao.save(student);
-        if (Objects.isNull(studentAdded)) {
-            return ResponseEntity.noContent().build();
-        }
+    public ResponseEntity<StudentRepository> addStudent(@RequestBody Student student) {
+        Student studentAdded = studentRepository.save(student);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -45,4 +48,25 @@ public class StudentController {
                 .toUri();
         return ResponseEntity.created(location).build();
     }
+
+    @DeleteMapping(value="/students/{id}")
+    public ResponseEntity<StudentRepository> deleteStudents(@PathVariable long id) {
+        try {
+            studentRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/students")
+    public ResponseEntity<HttpStatus> deleteAllTutorials() {
+        try {
+            studentRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
