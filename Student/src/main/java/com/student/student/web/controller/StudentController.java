@@ -18,7 +18,9 @@ import java.util.Optional;
  * Project: student
  * Package: com.student.student.web.controller
  */
+@CrossOrigin
 @RestController
+@RequestMapping("/api")
 public class StudentController {
 
     final StudentRepository studentRepository;
@@ -35,6 +37,7 @@ public class StudentController {
     @GetMapping("/student/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id) {
         Optional<Student> student = studentRepository.findById(id);
+        System.out.println(student);
         return student.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
