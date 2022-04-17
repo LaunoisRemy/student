@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  notes-microservice:
+    build: ./notes-microservice
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+    volumes:
+      - ./notes-microservice/:/app/
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URI=postgresql://note_db_username:note_db_password@note_db:5432/note_db_dev
+
+  note_db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=note_db_username
+      - POSTGRES_PASSWORD=note_db_password
+      - POSTGRES_DB=note_db_dev
