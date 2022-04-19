@@ -1,4 +1,4 @@
-FROM openjdk:18-alpine
-EXPOSE 8080
-ADD target/spring-boot-docker.jar spring-boot-docker.jar
-ENTRYPOINT ["java","-jar","/spring-boot-docker.jar"]
+FROM bellsoft/liberica-openjdk-alpine-musl:18
+MAINTAINER baeldung.com
+COPY target/spring-boot-docker.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]

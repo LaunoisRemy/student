@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind screens;
+@import "variables";
+@import "selectMultiple";
+
+.body {
+  @apply bg-gray-100;
+}
+
+.form_container {
+  form {
+    @apply flex flex-col w-full p-10 px-8 pt-6 mx-auto transition duration-500 ease-in-out transform bg-white border rounded-lg;
+  }
+
+  textarea {
+    resize: none;
+  }
+}
+
+
+/* Toggle B */
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #48bb78;
+}
+
+h1 {
+  @apply text-center xl:text-5xl md:text-4xl text-2xl font-bold text-gray-800 mt-4;
+}
+
+
+form, table, #sidebar {
+  svg {
+    @apply w-6;
+  }
+}
+
+[data-open="false"] {
+  & ~ section.dropdown-sidebar {
+    display: none;
+
+    svg {
+      @apply w-6;
+    }
+  }
+
+  .caret-sidebar {
+    transform: rotate(180deg);
+  }
+}
+
+[data-open="true"] {
+  & ~ section.dropdown-sidebar {
+    display: block;
+
+    svg {
+      @apply w-6;
+    }
+  }
+}
+
+.thumbnail {
+  @apply p-1 bg-white border max-w-sm rounded-lg max-h-40;
+}
+
+#sidebar{
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.button {
+  @apply my-2 transition duration-150 ease-in-out rounded
+  px-6 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2
+  flex flex-row shrink justify-center w-16 h-8;
+
+  &-blue {
+    @apply hover:bg-blue-600 text-white focus:ring-blue-600 bg-blue-700 ;
+  }
+
+  &-red {
+    @apply hover:bg-red-600 text-white focus:ring-red-600 bg-red-700 ;
+  }
+
+  &-green {
+    @apply hover:bg-green-600 text-white focus:ring-green-600 bg-green-700 ;
+  }
+}
