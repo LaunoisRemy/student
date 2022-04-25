@@ -1,14 +1,15 @@
 import {useEffect, useState} from "react";
 import {urlStudent}          from "./Home";
 
-function Etudiant({id, close}) {
+function Etudiant({id, close, showNote}) {
     
     const [etudiant, setEtudiant] = useState({
         email: "",
         password: "",
         name: "",
-        lastname: "",
+        lastName: "",
     })
+    if (showNote) id = null
     
     const getEtudiant = async (id) => {
         const response = await fetch(`${urlStudent}/student/${id}`)
@@ -18,10 +19,28 @@ function Etudiant({id, close}) {
     
     useEffect( () => {
         async function fetchData(id) {
-            if(id != 0) await getEtudiant(id)
+            if(id != 0 && id !== null && !showNote) await getEtudiant(id)
         }
+        
         fetchData(id)
     }, [id]);
+    
+    async function addEtudiant() {
+        const req = await fetch(`${urlStudent}s`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(etudiant)
+        })
+        setEtudiant({
+            email: "",
+            password: "",
+            name: "",
+            lastName: "",
+        })
+        close(null)
+    }
     
     return <section className={id === null ? "hidden" : ""}>
         <div id="popup" className="z-50 fixed w-full flex justify-center inset-0">
@@ -54,7 +73,8 @@ function Etudiant({id, close}) {
                                                     FirstName
                                                 </label>
                                                 <input type="text" min="0" value={etudiant?.name}
-                                                       placeholder="Firstname" id="firstname" name="firstname"
+                                                       onChange={(e) => setEtudiant({...etudiant, name: e.target.value})}
+                                                       placeholder="Firstname" id="firstname" name="name"
                                                        aria-label="firstname" autoComplete="off" required className="text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2
                    focus:ring-offset-2 focus:ring-indigo-700 bg-white font-normal w-full h-10
                    flex items-center pl-3 text-sm border-gray-300 rounded border shadow"/>
@@ -67,6 +87,7 @@ function Etudiant({id, close}) {
                                                     lastName
                                                 </label>
                                                 <input type="text" min="0" value={etudiant.lastName}
+                                                       onChange={(e) => setEtudiant({...etudiant, lastName: e.target.value})}
                                                        placeholder="lastName" id="lastName" name="lastName"
                                                        aria-label="lastName" autoComplete="off" required className="text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2
                    focus:ring-offset-2 focus:ring-indigo-700 bg-white font-normal w-full h-10
@@ -79,8 +100,9 @@ function Etudiant({id, close}) {
                                                        className="text-gray-800 text-sm font-bold leading-tight tracking-normal mb-2">
                                                     Email
                                                 </label>
-                                                <input type="text" min="0" value={etudiant.email}
-                                                       placeholder="lastName" id="lastName" name="lastName"
+                                                <input type="email" min="0" value={etudiant.email}
+                                                       onChange={(e) => setEtudiant({...etudiant, email: e.target.value})}
+                                                       placeholder="Email" id="email" name="email"
                                                        aria-label="lastName" autoComplete="off" required className="text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2
                    focus:ring-offset-2 focus:ring-indigo-700 bg-white font-normal w-full h-10
                    flex items-center pl-3 text-sm border-gray-300 rounded border shadow"/>
@@ -92,9 +114,10 @@ function Etudiant({id, close}) {
                                                        className="text-gray-800 text-sm font-bold leading-tight tracking-normal mb-2">
                                                     password
                                                 </label>
-                                                <input type="text" min="0" value={etudiant.password}
-                                                       placeholder="lastName" id="lastName" name="lastName"
-                                                       aria-label="lastName" autoComplete="off" required className="text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2
+                                                <input type="password" min="0" value={etudiant.password}
+                                                       onChange={(e) => setEtudiant({...etudiant, password: e.target.value})}
+                                                       placeholder="Password" id="password" name="password"
+                                                       aria-label="Password" autoComplete="off" required className="text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2
                    focus:ring-offset-2 focus:ring-indigo-700 bg-white font-normal w-full h-10
                    flex items-center pl-3 text-sm border-gray-300 rounded border shadow"/>
                                             </div>
@@ -107,8 +130,9 @@ function Etudiant({id, close}) {
                                         className="px-6 py-3 bg-gray-400 hover:bg-gray-500 shadow rounded text-sm text-white">
                                     Cancel
                                 </button>
-                                <button
-                                    className="px-6 py-3 bg-indigo-700 hover:bg-opacity-80 shadow rounded text-sm text-white">Add User
+                                <button onClick={addEtudiant}
+                                        className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 shadow rounded text-sm text-white">
+                                    Add User
                                 </button>
                             </div>
                         </div>

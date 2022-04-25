@@ -2,10 +2,12 @@ import React, {useEffect, useState} from "react";
 import Pagination                   from "./Pagination";
 import Etudiant                     from "./Etudiant";
 import {NavLink}                    from "react-router-dom";
+import NoteForm                     from "./noteForm";
 export const urlStudent = `http://localhost:8080/api/student`
 
 function Home () {
     const [show, setShow] = useState(-1);
+    const [showNote, setShowNote] = useState(false);
     const [etudiants, setEtudiants] = useState([]);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(5);
@@ -20,27 +22,34 @@ function Home () {
     async function getEtudiants(page) {
         const response = await fetch(`${urlStudent}s?page=${page}`);
         const data = await response.json();
-        setEtudiants(data.content);
-        setMaxPage(data.totalPages);
+        setEtudiants(data);
+        setMaxPage(data);
     }
     
     useEffect( () => {
         async function fetchData(page) {
-            await getEtudiants(page);
+            if (etudiantId === 0 || etudiantId === null)await getEtudiants(page);
         }
         fetchData(page);
-    }, [page]);
+    }, [page, etudiantId]);
     
     async function deleteEtudiant(id) {
-        await fetch(`${urlStudent}/${id}`, {
+        await fetch(`${urlStudent}s/${id}`, {
             method: "DELETE"
         });
+        getEtudiants(page)
     }
     
     async function deleteAll() {
         await fetch(`${urlStudent}s`, {
             method: "DELETE"
         });
+        getEtudiants(page)
+    }
+    
+    const addNote = (id) => {
+        setEtudiantId(id);
+        setShowNote(true);
     }
     
     return (
@@ -116,7 +125,8 @@ function Home () {
                                 <td>
                                     <div className="flex items-center">
                                         <button onClick={() => setEtudiantId(etudiant.id)} className="hidden lg:flex bg-gray-100 mr-3 hover:bg-gray-200 py-2.5 px-5 rounded text-sm leading-3 text-gray-500 focus:outline-none">Edit</button>
-                                        <button onClick={() => deleteEtudiant(etudiant.id)} className="hidden lg:flex bg-gray-100 mr-5 hover:bg-gray-200 py-2.5 px-5 rounded text-sm leading-3 text-gray-500 focus:outline-none">Call</button>
+                                        <button onClick={() => deleteEtudiant(etudiant.id)} className="hidden lg:flex bg-gray-100 mr-5 hover:bg-gray-200 py-2.5 px-5 rounded text-sm leading-3 text-gray-500 focus:outline-none">Delete</button>
+                                        <button onClick={() => addNote(etudiant.id)} className="hidden lg:flex bg-gray-100 mr-5 hover:bg-gray-200 py-2.5 px-5 rounded text-sm leading-3 text-gray-500 focus:outline-none">Add Note</button>
                                         <div className="relative px-5 pt-2 lg:hidden">
                                             {show === -1 ? (
                                                 <button className="focus:outline-none" onClick={() => setShow(etudiant.id)}>
@@ -140,6 +150,9 @@ function Home () {
                                                     <div onClick={() => setEtudiantId(etudiant.id)} className="text-xs w-full hover:bg-indigo-700 py-4 px-4 cursor-pointer hover:text-white">
                                                         <p>Edit</p>
                                                     </div>
+                                                    <div onClick={() => addNote(etudiant.id)} className="text-xs w-full hover:bg-indigo-700 py-4 px-4 cursor-pointer hover:text-white">
+                                                        <p>Note</p>
+                                                    </div>
                                                     <div onClick={() => deleteEtudiant(etudiant.id)} className="text-xs w-full hover:bg-indigo-700 py-4 px-4 cursor-pointer hover:text-white">
                                                         <p>Delete</p>
                                                     </div>
@@ -155,6 +168,7 @@ function Home () {
                 </div>
                 <Pagination currentPage={page} move={move} maxPage={maxPage}/>
                 <Etudiant id={etudiantId} close={setEtudiantId}/>
+                <NoteForm id={null} close={setShowNote} studentId={etudiantId} show={showNote}/>
             </div>
         </>
     );

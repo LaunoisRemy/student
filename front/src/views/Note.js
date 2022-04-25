@@ -4,10 +4,10 @@ import Etudiant                     from "./Etudiant";
 import React, {useEffect, useState} from "react";
 import NoteForm                     from "./noteForm";
 
-export const urlnote = "http://localhost:8080/notes"
+export const urlnote = 'http://localhost:8000/api/v1/notes'
 
 function Note() {
-    const [show, setShow] = useState(-1);
+    const [show, setShow] = useState(false);
     const [notes, setNotes] = useState([]);
     const [page, setPage] = useState(2);
     const [maxPage, setMaxPage] = useState(10);
@@ -20,10 +20,9 @@ function Note() {
     }
     
     async function getNotes() {
-        const response = await fetch(`${urlnote}?page=${page}`);
+        const response = await fetch(urlnote);
         const data = await response.json();
-        setNotes(data.content);
-        setMaxPage(data.totalPages);
+        setNotes(data);
     }
     
     useEffect(() => {
@@ -93,7 +92,7 @@ function Note() {
                             </div>
                         </div>
                         <div className="flex items-center mt-4 md:mt-0 md:ml-3 lg:ml-0">
-                            <button onClick={() => setNoteId(0)}
+                            <button onClick={() => setShow(true)}
                                     className="inline-flex ml-1.5 items-start justify-start px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
                                 <p className="text-sm font-medium leading-none text-white">Add Note</p>
                             </button>
@@ -118,7 +117,7 @@ function Note() {
                     </thead>
                     <tbody className="w-full">
                     {notes.length == 0 && (
-                        <div>Loading...</div>
+                        <tr><td colSpan={4}>Loading...</td></tr>
                     )}
                     
                     {notes.length > 0 && (
@@ -151,7 +150,7 @@ function Note() {
                 </table>
             </div>
             <Pagination currentPage={page} move={move} maxPage={maxPage}/>
-            <NoteForm id={noteId} close={setNoteId}/>
+            <NoteForm id={noteId} close={setShow}/>
         </div>
     </>
 }

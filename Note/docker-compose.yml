@@ -7,7 +7,7 @@ services:
     volumes:
       - ./notes-microservice/:/app/
     ports:
-      - 8080:8080
+      - "8000:8080"
     environment:
       - DATABASE_URI=postgresql://note_db_username:note_db_password@note_db:5432/note_db_dev
 
