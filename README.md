@@ -1,6 +1,6 @@
 # Projet Final Docker & Kubernetes
 
-Ressources necessaire :
+Ressources necessaires:
 - Docker
 - DockerCompose (compris dans DockerDesktop)
 - Kubernetes
