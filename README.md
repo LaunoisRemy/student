@@ -6,7 +6,6 @@ Ressources necessaire :
 - Kubernetes
 
 ##  Docker
-#
 
 Afin de conteneuriser les microservices il est necessaire d'exécuter la commande *docker-compose up -d* dans chacun des dossiers :
 - Note
